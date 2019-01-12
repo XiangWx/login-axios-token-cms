@@ -1,6 +1,6 @@
 # login-token-axios
 
-> A Vue.js project
+> 使用token完成的login登陆页面
 
 ## Build Setup
 
