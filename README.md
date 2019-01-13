@@ -1,6 +1,10 @@
 # login-token-axios
 
+<<<<<<< HEAD
 > axios+token+Element UI
+=======
+> 使用token完成的login登陆页面
+>>>>>>> e51bfae43b50883fdd4174115c69dd25b3b04635
 
 # install dependencies
 npm install
