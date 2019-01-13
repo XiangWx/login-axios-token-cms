@@ -14,7 +14,7 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 
--------------------------------------
+
 ### 项目部署
 
 1. 使用`vue-cli`脚手架搭建项目 
@@ -46,3 +46,8 @@ npm run build --report
 	:default-openeds="['1']"
 
 就可以实现，这里‘1’ 是需要展开的子sub目录的index值。
+
+问题2： 使用自带的一些属性值 要用 `：`绑定
+
+1. 侧边栏部分使用了	nav	menu导航菜单
+2. 收货地址部分使用了 	Table 表格
