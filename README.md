@@ -1,10 +1,7 @@
 # login-token-axios
 
-> A Vue.js project
+> axios+token+Element UI
 
-## Build Setup
-
-``` bash
 # install dependencies
 npm install
 
@@ -16,6 +13,36 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
-```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+-------------------------------------
+### 项目部署
+
+1. 使用`vue-cli`脚手架搭建项目 
+  	 
+   准备环境： node（8以上），npm ，vue-cli（全局安装）
+
+	vue init webpack ‘项目名称’
+
+2. 安装包
+
+    npm i less less-loader -D
+	
+    npm i element-ui axios vuex -S
+
+3. 使用git/svn管理代码 这里使用的是git
+  	
+   在本地初始化仓库：
+	
+        git init 
+ 
+ 提交代码到本地仓库 
+
+在github上建立空仓库，将本地仓库和github仓库建立关联，直接复制过来即可
+
+
+### 使用Element-UI
+
+问题1： 想要实现<el-menu>默认展开一个菜单项，在标签上添加
+	:default-openeds="['1']"
+
+就可以实现，这里‘1’ 是需要展开的子sub目录的index值。
