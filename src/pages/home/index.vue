@@ -1,5 +1,7 @@
 <template>
   <div>
+     <el-button type="success">{{userInfo.nickname}}</el-button>
+    <el-button @click="logout" type="primary">退出</el-button>
     <!-- 头部tabs-->
     <el-tabs value="first" :stretch="true">
       <el-tab-pane label="用户管理" name="first">
@@ -26,7 +28,6 @@
                 </el-menu-item-group>
                 <el-menu-item-group title="收获人信息管理">
                   <el-menu-item index="/register">地址
-                    <router-view></router-view>
                   </el-menu-item>
                 </el-menu-item-group>
                 <el-submenu index="1-4">
@@ -55,18 +56,28 @@
               </el-menu-item>
             </el-menu>
           </el-col>
-          <!-- <el-col :span="16" class="content-wrapper"> -->
-          <!-- <transition name="fade" mode="out-in"> -->
-          <!-- <router-view></router-view> -->
-          <!-- </transition> -->
-          <!-- </el-col> -->
+          <el-col class="content-right" :span="18">
+            <el-table :data="tableData" style="width: 100%">
+              <el-table-column label="收货人信息">
+                <el-table-column prop="receiver_name" label="姓名" width="120"></el-table-column>
+                <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
+                <el-table-column label="地址">
+                  <el-table-column prop="province" label="省份" width="120"></el-table-column>
+                  <el-table-column prop="city" label="市区" width="120"></el-table-column>
+                  <el-table-column prop="area" label="区/镇" width="120"></el-table-column>
+                  <el-table-column prop="detailed_address" label="详细地址" width="300"></el-table-column>
+                  <el-table-column prop="postcode" label="邮编" width="120"></el-table-column>
+                </el-table-column>
+              </el-table-column>
+            </el-table>
+          </el-col>
         </el-row>
       </el-tab-pane>
 
       <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
       <el-tab-pane label="角色管理" name="third">
           <!-- 收货地址 -->
-        <el-table :data="tableData" stripe style="width: 100% height:467px">
+        <el-table :data="tableData" stripe :span="20">
           <el-table-column prop="date" label="日期" width="180"></el-table-column>
           <el-table-column prop="name" label="姓名" width="180"></el-table-column>
           <el-table-column prop="address" label="地址"></el-table-column>
@@ -81,18 +92,26 @@
 export default {
   data() {
     return {
-     tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ]
+      tableData: [],
+      userInfo:{}
     };
   },
+  created(){
+    this.userInfo = JSON.parse(localStorage.setItem('userInfo') || '{}')
+    this.handleSelect()
+  },
   methods: {
-    handleSelect(index) {
-      this.currentTopMenu = index;
+    handleSelect() {
+      let token = localStorage.getItem('token')
+      this.axios
+        .get("users/getReceiverAddress",{headers:{Authorization:token}})
+        .then(result => {
+          console.log(result.data);
+          this.tableData = result.data.data;
+        })
+        .catch(err=>{
+          console.dir(err)
+        })
     }
   }
 };

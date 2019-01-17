@@ -1,10 +1,6 @@
 # login-token-axios
 
-<<<<<<< HEAD
 > axios+token+Element UI
-=======
-> 使用token完成的login登陆页面
->>>>>>> e51bfae43b50883fdd4174115c69dd25b3b04635
 
 # install dependencies
 npm install
@@ -44,7 +40,7 @@ npm run build --report
 在github上建立空仓库，将本地仓库和github仓库建立关联，直接复制过来即可
 
 
-### 使用Element-UI
+###  使用Element-UI
 
 问题1： 想要实现<el-menu>默认展开一个菜单项，在标签上添加
 	:default-openeds="['1']"
@@ -54,4 +50,52 @@ npm run build --report
 问题2： 使用自带的一些属性值 要用 `：`绑定
 
 1. 侧边栏部分使用了	nav	menu导航菜单
+
 2. 收货地址部分使用了 	Table 表格
+
+
+## axios的使用
+
+1. 安装：
+
+      npm install axios
+
+2. 导入
+     import axios from 'axios'
+
+3. 配置根路径
+
+   在main.js中配置根路径
+
+    //配置根路径
+	import axios from 'axios'
+	axios.defaults.baseURL = 'http://litc.pro:9999/v1/'
+	//在Vue的原型上挂载这么一个方法 axios 其他位置引用直接 使用 无需二次导入
+	Vue.prototype.axios = axios
+
+   在Vue的原型上挂载这么一个方法 axios 其他位置引用直接 使用 无需二次导入
+
+	Vue.protoType.axios = axios
+
+4. 登陆成功之后，把token存储到本地localStorage中
+
+5. 路由的导航守卫 作用:  在每一次路由跳转的时候, 都会触发一系列回调函数, 这些回调函数被称为导航守卫, 可以在这些回调函数中进行路由拦截操作
+
+   	在进入某个路由之前进行业务操作
+
+		router.beforeEach((to, from, next) => {
+		  // 在此处就需要判断, 是否能进入一些禁地(需要登录的页面)
+		  // console.log(to, from)
+		  // 如果添加了导航守卫的回调函数
+		  // 必须调用next函数  将其引导到某个页面, 如果不传参数就是不干预路由跳转
+		  let token = localStorage.getItem('token')
+		//如果没有token或者当前页面不是login再去跳转，一定要注意此处要判断是不是已经在login页面，否则会成为死循环
+		  if (!token && to.path !== '/login') {  
+		    return next('/login')
+		  }
+		
+		  next()
+		})
+
+
+
