@@ -77,25 +77,85 @@ npm run build --report
 
 	Vue.protoType.axios = axios
 
-4. 登陆成功之后，把token存储到本地localStorage中
 
-5. 路由的导航守卫 作用:  在每一次路由跳转的时候, 都会触发一系列回调函数, 这些回调函数被称为导航守卫, 可以在这些回调函数中进行路由拦截操作
+### token做登陆状态保持
+1. 发送post请求，把用户名，密码传递给服务器
 
-   	在进入某个路由之前进行业务操作
+2. 点击登陆，登陆成功之后，将服务器端生成并返回的令牌 `token`数据存储到`localStorage`中
+
+	       this.$http
+	        .post("/users/login", {
+	          username: this.username,
+	          password: this.password
+	        })
+	        .then(result => {
+	          localStorage.setItem("token", result.data.data.token);
+	          localStorage.setItem("userInfo", JSON.stringify(result.data.data));
+
+3. 如果要获取登陆之后才能获取的数据，在发送get/post 请求时，需要将token手动携带过去，作为身份识别：
+
+		 getReceiverInfos() {
+		       let token = localStorage.getItem("token");
+		     axios
+		        .get("users/getReceiverAddress",{headers:{Authorization:token}})
+		        .then(result => {
+		          this.receiverInfos = result.data.data;
+		        })
+		        .catch(err => {
+		          console.dir(err);
+		        });
+		    },
+
+此时每次发请求都得携带token，比较麻烦，所以用到axios 请求拦截器，见下
+
+5. 路由vue-router的导航守卫 作用:  在每一次路由跳转的时候, 都会触发一系列回调函数, 这些回调函数被称为导航守卫, 可以在这些回调函数中进行路由拦截操作
+
+   	在进入某个路由之前进行拦截，必须调用next（）函数  将其引导到某个页面, 如果不传参数就是不干预路由跳转
 
 		router.beforeEach((to, from, next) => {
 		  // 在此处就需要判断, 是否能进入一些禁地(需要登录的页面)
-		  // console.log(to, from)
 		  // 如果添加了导航守卫的回调函数
-		  // 必须调用next函数  将其引导到某个页面, 如果不传参数就是不干预路由跳转
 		  let token = localStorage.getItem('token')
-		//如果没有token或者当前页面不是login再去跳转，一定要注意此处要判断是不是已经在login页面，否则会成为死循环
+
+		//如果没有token或者当前页面不是login就return掉，不再执行，并且让其跳转到login页面，一定要注意此处要判断是不是已经在login页面，否则会成为死循环
 		  if (!token && to.path !== '/login') {  
-		    return next('/login')
+		    return 
+			next('/login') 
 		  }
-		
 		  next()
 		})
 
+6. axios的拦截器自动获取token，有两个，请求拦截器，响应拦截器
 
+    原理：根据axios发送出去的请求，都会经过拦截器的这道拦截操作，请求的最后一道关卡，配置好之后，后面再发送请求，不需要携带token，会自动去获取 本地的token 
+
+		// 添加一个请求拦截器
+		//此处的config就是get请求的第二个参数
+		axios.interceptors.request.use(function (config) {
+		  let token = localStorage.getItem('token')
+			  if (token) {
+			    config.headers.Authorization = token
+			  }
+		    return config;
+		  }, function (error) {
+		  
+		    return Promise.reject(error);
+		  });
+		
+		// 添加一个响应拦截器
+		axios.interceptors.response.use(function (response) {
+		  
+		    return response;
+		  }, function (error) {
+		 
+		    return Promise.reject(error);
+		  });
+
+## 拓展
+
+  实现输入完用户名密码之后，回车进入登陆页面
+
+ 添加事件 @keydown.enter="login",发现没有效果，原因是：这里使用的第三方组件库，input是进行封装之后的，直接这样无法绑定事件
+
+		@keydown.native.enter="login"
 
